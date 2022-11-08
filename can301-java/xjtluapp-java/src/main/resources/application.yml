@@ -1,0 +1,33 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/can301?serverTimezone=GMT%2b8&allowMultiQueries=true
+    username: root
+    password: Zzr2264165381@
+    hikari:
+      max-lifetime: 500000
+  servlet:
+    multipart:
+      max-file-size: 10MB
+
+mybatis-plus:
+  mapper-locations: classpath:mapper/*.xml #扫描所有mybatis的xml文件
+  type-aliases-package: com.groupa15.entity
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+shiro:
+  jwtFilterName: "jwtFilter"
+  filterList: ["/hello/again", "/logout", "/user/info", "/article/**", "/auth"]
+
+jwt:
+  secret: f4e2e52034348f86b67cde581c0f9eb5
+  expire: 604800
+  header: Authorization
+
+secure:
+  saltLength: 32
+  hashIterations: 1024

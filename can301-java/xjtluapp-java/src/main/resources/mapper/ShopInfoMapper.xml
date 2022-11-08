@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.groupa15.mapper.ShopInfoMapper">
+    <select id="selectAllShopInfo" resultType="ShopInfoVo">
+        SELECT s.shop_id, s.shop_name, s.shop_rating, s.shop_sales, s.shop_cover_image
+        FROM can301.shop_info s
+    </select>
+</mapper>
