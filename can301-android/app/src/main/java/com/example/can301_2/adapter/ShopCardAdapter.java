@@ -39,7 +39,7 @@ public class ShopCardAdapter extends RecyclerView.Adapter<ShopCardAdapter.ShopCa
         holder.textViewShopName.setText(shopInfo.getShopName());
         holder.textViewShopSales.setText(holder.itemView.getContext().getString(R.string.shop_sales, shopInfo.getShopSales()));
         holder.ratingBarShopRating.setRating(shopInfo.getShopRating().floatValue());
-        Glide.with(holder.itemView).load("http://192.168.50.84:8081/static/" + shopInfo.getShopCoverImage()).into(holder.imageViewShopCoverImage);
+        Glide.with(holder.itemView).load("http://106.14.123.152:8081/static/" + shopInfo.getShopCoverImage()).into(holder.imageViewShopCoverImage);
     }
 
     @Override

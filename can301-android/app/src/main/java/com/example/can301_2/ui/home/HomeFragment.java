@@ -90,7 +90,7 @@ public class HomeFragment extends Fragment {
             String result = "";
 
             Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("http://192.168.50.84:8081")
+                    .baseUrl("http://106.14.123.152:8081")
                     .build();
             ShopInfoApi api = retrofit.create(ShopInfoApi.class);
             Call<ResponseBody> task = api.getAllShopInfo();
