@@ -1,4 +1,4 @@
-package com.example.can301_2;
+package com.example.can301_2.ui.map;
 
 
 import android.content.Context;
@@ -24,9 +24,10 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
+import com.example.can301_2.R;
 
 
-public class BaiduMapFragment extends Fragment {
+public class MapFragment extends Fragment {
 
     private View view;
     private MapView mapView;
@@ -43,7 +44,7 @@ public class BaiduMapFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if(view == null){
-            view = inflater.inflate(R.layout.fragment_baidu_map, container, false);
+            view = inflater.inflate(R.layout.fragment_map, container, false);
         }
 
         mapView = view.findViewById(R.id.baiduMapView);

@@ -1,10 +1,15 @@
 package com.example.can301_2;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
+import androidx.navigation.ui.AppBarConfiguration;
+import androidx.navigation.ui.NavigationUI;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -14,13 +19,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
+import com.example.can301_2.databinding.ActivityMainBinding;
+
 import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity{
 
     private final String TAG = "MainActivity";
+    private ActivityMainBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +47,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         else {
             initSDK(true);
-            setContentView(R.layout.activity_main);
-            Button button = findViewById(R.id.btn);
-            button.setOnClickListener(this);
         }
+
+
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        BottomNavigationView navView = findViewById(R.id.nav_view);
+        // Passing each menu ID as a set of Ids because each
+        // menu should be considered as top level destinations.
+        AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
+                R.id.navigation_home, R.id.navigation_map, R.id.navigation_user)
+                .build();
+        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
+        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        NavigationUI.setupWithNavController(binding.navView, navController);
+
     }
 
 
@@ -56,22 +77,4 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
-    @SuppressLint("NonConstantResourceId")
-    @Override
-    public void onClick(View view){
-        switch (view.getId()) {
-            case R.id.btn:
-                BaiduMapFragment baiduMapFragment = new BaiduMapFragment();
-                Log.e(TAG, "onClick: ");
-                replaceFragment(baiduMapFragment);
-                break;
-        }
-    }
-
-    private void replaceFragment(Fragment fragment) {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction transaction = fragmentManager.beginTransaction();
-        transaction.replace(R.id.frameLayout, fragment);
-        transaction.commit();
-    }
 }
