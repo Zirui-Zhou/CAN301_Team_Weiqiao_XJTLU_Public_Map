@@ -9,7 +9,17 @@
         android:id="@+id/baiduMapView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:clickable="true" />
+
+    <ImageView
+        android:id="@+id/dingwei"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="20dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/white"
         android:clickable="true"
-        android:focusable="true" />
+        android:src="@drawable/dingwei" />
 
 </FrameLayout>
