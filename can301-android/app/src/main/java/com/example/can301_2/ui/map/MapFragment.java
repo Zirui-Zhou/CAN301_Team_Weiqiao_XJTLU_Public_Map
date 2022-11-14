@@ -45,7 +45,7 @@ public class MapFragment extends Fragment {
     private double lat;
     private double lon;
 
-    private ImageView dingwei;//定位图标
+    private ImageView myLocationImage;//定位图标
     private final String TAG = "BaiduFragment";
 
 
@@ -54,12 +54,12 @@ public class MapFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if(view == null){
+    if(view == null){
             view = inflater.inflate(R.layout.fragment_map, container, false);
         }
 
         mapView = view.findViewById(R.id.baiduMapView);
-        dingwei = view.findViewById(R.id.dingwei);
+        myLocationImage = view.findViewById(R.id.my_location);
         try {
             initMap();
         } catch (Exception e) {
@@ -72,7 +72,7 @@ public class MapFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        dingwei.setOnClickListener(new View.OnClickListener() {
+        myLocationImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 locClient.requestLocation();
