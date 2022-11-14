@@ -35,9 +35,9 @@ public class ShopCardAdapter extends RecyclerView.Adapter<ShopCardAdapter.ShopCa
     @Override
     public void onBindViewHolder(@NonNull ShopCardViewHolder holder, int position) {
         ShopInfo shopInfo = allShopInfo.get(position);
-//        ShopInfo shopInfo = new ShopInfo("1", "2");
         holder.textViewShopName.setText(shopInfo.getShopName());
         holder.textViewShopSales.setText(holder.itemView.getContext().getString(R.string.shop_sales, shopInfo.getShopSales()));
+        holder.textViewShopDescription.setText(shopInfo.getShopDescription());
         holder.ratingBarShopRating.setRating(shopInfo.getShopRating().floatValue());
         Glide.with(holder.itemView).load("http://106.14.123.152:8081/static/" + shopInfo.getShopCoverImage()).into(holder.imageViewShopCoverImage);
     }
@@ -48,7 +48,7 @@ public class ShopCardAdapter extends RecyclerView.Adapter<ShopCardAdapter.ShopCa
     }
 
     static class ShopCardViewHolder extends RecyclerView.ViewHolder {
-        TextView textViewShopName, textViewShopSales;
+        TextView textViewShopName, textViewShopSales, textViewShopDescription;
         RatingBar ratingBarShopRating;
         ImageView imageViewShopCoverImage;
         public ShopCardViewHolder(@NonNull View itemView) {
@@ -57,6 +57,7 @@ public class ShopCardAdapter extends RecyclerView.Adapter<ShopCardAdapter.ShopCa
             textViewShopSales = itemView.findViewById(R.id.shopSales);
             ratingBarShopRating = itemView.findViewById(R.id.shopRating);
             imageViewShopCoverImage = itemView.findViewById(R.id.shopCoverImage);
+            textViewShopDescription = itemView.findViewById(R.id.shopDescription);
         }
     }
 }

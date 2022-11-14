@@ -3,7 +3,6 @@ package com.example.can301_2.ui.home;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,21 +17,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.can301_2.adapter.ShopCardAdapter;
 import com.example.can301_2.api.ShopInfoApi;
 import com.example.can301_2.databinding.FragmentHomeBinding;
-import com.example.can301_2.domain.CommonResponse;
 import com.example.can301_2.domain.ShopInfo;
 import com.example.can301_2.utils.RequestUtils;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
-
-import okhttp3.Request;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class HomeFragment extends Fragment {
 

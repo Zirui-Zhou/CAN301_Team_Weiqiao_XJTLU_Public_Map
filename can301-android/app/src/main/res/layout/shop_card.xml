@@ -90,6 +90,16 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="曦曦的甜蜜小屋" />
+
+                <TextView
+                    android:id="@+id/shopDescription"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.813"
+                    app:layout_constraintStart_toEndOf="@+id/shopSales"
+                    app:layout_constraintTop_toBottomOf="@+id/shopRating" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
