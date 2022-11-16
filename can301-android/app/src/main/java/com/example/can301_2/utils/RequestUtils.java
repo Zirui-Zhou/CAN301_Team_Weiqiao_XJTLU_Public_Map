@@ -6,6 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class RequestUtils {
 
     public final static String baseUrl = "http://106.14.123.152:8081";
+    public final static String baseStaticUrl = baseUrl + "/static";
     public final static Retrofit retrofit = new Retrofit.Builder()
             .baseUrl(baseUrl)
             .addCallAdapterFactory(new SyncCallAdapter.Factory())

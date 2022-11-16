@@ -40,4 +40,5 @@ public class SyncCallAdapter<T> implements CallAdapter<T, T> {
             return new SyncCallAdapter(returnType);
         }
     }
+
 }

@@ -6,10 +6,14 @@ import com.example.can301_2.domain.ShopInfo;
 import java.util.List;
 
 import retrofit2.http.GET;
+import retrofit2.http.Query;
 
 public interface ShopInfoApi {
 
     @GET("/shopinfo")
     CommonResponse<List<ShopInfo>> getAllShopInfo();
+
+    @GET("/shopinfo")
+    CommonResponse<ShopInfo> getShopInfoById(@Query("id") Long shop_id);
 
 }

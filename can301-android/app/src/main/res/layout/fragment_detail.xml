@@ -36,14 +36,15 @@
                 android:text="价格"
                 android:textColor="@color/black"
                 android:textSize="15sp" />
+
             <ImageView
                 android:id="@+id/detail_arrow1"
                 android:layout_width="15dp"
                 android:layout_height="15dp"
                 android:layout_alignBottom="@+id/price"
                 android:layout_alignParentEnd="true"
-                android:src="@drawable/arrow"
-                android:layout_marginBottom="2dp"/>
+                android:layout_marginBottom="2dp"
+                app:srcCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
             <TextView
                 android:id="@+id/comment"
                 android:layout_width="wrap_content"
@@ -64,6 +65,7 @@
                     android:layout_height="match_parent">
 
                     <ImageView
+                        android:id="@+id/detail_image_first"
                         android:layout_width="150dp"
                         android:layout_height="match_parent"
                         android:layout_marginLeft="10dp"
@@ -109,8 +111,8 @@
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_alignParentEnd="true"
-                    android:src="@drawable/arrow"
-                    android:layout_marginTop="4dp"/>
+                    android:layout_marginTop="4dp"
+                    app:srcCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
 
                 <TextView
                     android:id="@+id/detail"
@@ -178,13 +180,13 @@
                     android:textColor="@color/black"
                     android:textSize="20sp"
                     android:textStyle="bold" />
+
                 <ImageView
                     android:id="@+id/detail_distance_image"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
                     android:layout_below="@id/position"
-                    android:src="@drawable/distance"
-                    />
+                    app:srcCompat="@drawable/ic_baseline_location_on_24" />
                 <TextView
                     android:id="@+id/distance"
                     android:layout_width="wrap_content"
@@ -202,7 +204,7 @@
                     android:layout_height="30dp"
                     android:layout_alignParentRight="true"
                     android:layout_marginRight="25dp"
-                    android:src="@drawable/phone" />
+                    app:srcCompat="@drawable/ic_baseline_phone_24" />
 
                 <TextView
                     android:id="@+id/phone_number"
@@ -221,7 +223,7 @@
                     android:layout_height="30dp"
                     android:layout_marginRight="25dp"
                     android:layout_toLeftOf="@+id/image_phone"
-                    android:src="@drawable/taxi" />
+                    app:srcCompat="@drawable/ic_baseline_local_taxi_24" />
 
                 <TextView
                     android:id="@+id/taxi"

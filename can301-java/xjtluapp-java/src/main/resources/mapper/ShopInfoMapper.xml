@@ -3,8 +3,41 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.groupa15.mapper.ShopInfoMapper">
-    <select id="selectAllShopInfo" resultType="ShopInfoVo">
-        SELECT s.shop_id, s.shop_name, s.shop_rating, s.shop_sales, s.shop_cover_image
+    <resultMap id="ShopInfoMap" type="ShopInfoVo">
+        <id property="shopId" column="shop_id" jdbcType="BIGINT"/>
+        <result property="shopName" column="shop_name" jdbcType="VARCHAR"/>
+        <result property="shopRating" column="shop_rating" jdbcType="FLOAT"/>
+        <result property="shopSales" column="shop_sales" jdbcType="INTEGER"/>
+        <result property="shopCoverImage" column="shop_cover_image" jdbcType="VARCHAR"/>
+        <result property="shopAveragePrice" column="shop_average_price" jdbcType="FLOAT"/>
+        <result property="shopOpenTime" column="shop_open_time" jdbcType="TIME"/>
+        <result property="shopCloseTime" column="shop_close_time" jdbcType="TIME"/>
+        <result property="shopDescription" column="shop_description" jdbcType="VARCHAR"/>
+        <result property="shopLatitude" column="shop_latitude" jdbcType="FLOAT"/>
+        <result property="shopLongitude" column="shop_longitude" jdbcType="FLOAT"/>
+        <collection property="shopDetailImages" ofType="String">
+            <result column="shop_image_url"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectAllShopInfo" resultMap="ShopInfoMap">
+        SELECT s.shop_id, s.shop_name, s.shop_rating, s.shop_sales, s.shop_cover_image,
+               s.shop_average_price, s.shop_open_time, s.shop_close_time, s.shop_description,
+               s.shop_latitude, s.shop_longitude, i.shop_image_url
         FROM can301.shop_info s
+            LEFT JOIN can301.shop_detail_image i
+                on s.shop_id = i.shop_id
     </select>
+
+    <select id="selectShopInfoById" resultMap="ShopInfoMap">
+        SELECT s.shop_id, s.shop_name, s.shop_rating, s.shop_sales, s.shop_cover_image,
+               s.shop_average_price, s.shop_open_time, s.shop_close_time, s.shop_description,
+               s.shop_latitude, s.shop_longitude, i.shop_image_url
+        FROM can301.shop_info s
+                 LEFT JOIN can301.shop_detail_image i
+                           on s.shop_id = i.shop_id
+        WHERE s.shop_id = #{shopId}
+    </select>
+
 </mapper>
+

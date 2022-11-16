@@ -5,8 +5,8 @@ spring:
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
     url: jdbc:mysql://localhost:3306/can301?serverTimezone=GMT%2b8&allowMultiQueries=true
-    username: root
-    password: Zzr2264165381@
+    username: admin
+    password: admin
     hikari:
       max-lifetime: 500000
   servlet:

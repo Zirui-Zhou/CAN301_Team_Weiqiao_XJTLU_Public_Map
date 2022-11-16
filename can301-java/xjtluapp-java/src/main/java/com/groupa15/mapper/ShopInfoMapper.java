@@ -20,4 +20,5 @@ public interface ShopInfoMapper extends BaseMapper<ShopInfo> {
 
     List<ShopInfoVo> selectAllShopInfo();
 
+    ShopInfoVo selectShopInfoById(@Param("shopId") Long shopId);
 }

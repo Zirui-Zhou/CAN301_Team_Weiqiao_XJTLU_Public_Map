@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.experimental.Accessors;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 /**
  * @author Zirui Zhou
@@ -23,5 +24,17 @@ public class ShopInfo {
     private float shopRating;
 
     private String shopSales;
+
+    private float shopAveragePrice;
+
+    private Date shopOpenTime;
+
+    private Date shopCloseTime;
+
+    private String shopDescription;
+
+    private Double shopLatitude;
+
+    private Double shopLongitude;
 
 }
