@@ -2,19 +2,16 @@ package com.example.can301_2.ui.map;
 
 
 import android.content.Context;
-import android.graphics.PixelFormat;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -26,7 +23,6 @@ import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
-import com.baidu.mapapi.map.TextureMapView;
 import com.baidu.mapapi.model.LatLng;
 import com.example.can301_2.R;
 
@@ -45,7 +41,7 @@ public class MapFragment extends Fragment {
     private double lat;
     private double lon;
 
-    private ImageView dingwei;//定位图标
+    private ImageView myLocationImage;//定位图标
     private final String TAG = "BaiduFragment";
 
 
@@ -54,12 +50,12 @@ public class MapFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        if(view == null){
+    if(view == null){
             view = inflater.inflate(R.layout.fragment_map, container, false);
         }
 
         mapView = view.findViewById(R.id.baiduMapView);
-        dingwei = view.findViewById(R.id.dingwei);
+        myLocationImage = view.findViewById(R.id.my_location);
         try {
             initMap();
         } catch (Exception e) {
@@ -72,7 +68,7 @@ public class MapFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        dingwei.setOnClickListener(new View.OnClickListener() {
+        myLocationImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 locClient.requestLocation();

@@ -5,6 +5,7 @@ import com.groupa15.entity.ShopInfo;
 import com.groupa15.entity.vo.ShopInfoVo;
 import com.groupa15.mapper.ShopInfoMapper;
 import com.groupa15.service.ShopInfoService;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +25,13 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
     @Override
     public List<ShopInfoVo> getAllShopInfo() {
         return shopInfoMapper.selectAllShopInfo();
-    };
+    }
+
+    @Override
+    public ShopInfoVo getShopInfoById(Long shopId) {
+        return shopInfoMapper.selectShopInfoById(shopId);
+    }
+
+    ;
 
 }

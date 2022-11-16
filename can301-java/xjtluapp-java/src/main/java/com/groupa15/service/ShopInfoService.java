@@ -14,4 +14,5 @@ public interface ShopInfoService extends IService<ShopInfo>{
 
     List<ShopInfoVo> getAllShopInfo();
 
+    ShopInfoVo getShopInfoById(Long shopId);
 }

@@ -1,9 +1,11 @@
 package com.example.can301_2.ui.notifications;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,7 +15,7 @@ import androidx.lifecycle.ViewModelProvider;
 import com.example.can301_2.databinding.FragmentNotificationsBinding;
 
 public class NotificationsFragment extends Fragment {
-
+    private Button text_to_login;
     private FragmentNotificationsBinding binding;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -26,6 +28,7 @@ public class NotificationsFragment extends Fragment {
 
         final TextView textView = binding.textNotifications;
         notificationsViewModel.getText().observe(getViewLifecycleOwner(), textView::setText);
+
         return root;
     }
 
