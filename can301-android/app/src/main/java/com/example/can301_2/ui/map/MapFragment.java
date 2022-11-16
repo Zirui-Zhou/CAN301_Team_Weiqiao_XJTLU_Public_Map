@@ -2,6 +2,7 @@ package com.example.can301_2.ui.map;
 
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -12,19 +13,32 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.example.can301_2.R;
+import com.example.can301_2.api.ShopInfoApi;
+import com.example.can301_2.domain.ShopInfo;
+import com.example.can301_2.ui.home.HomeViewModel;
+import com.example.can301_2.utils.RequestUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 
 public class MapFragment extends Fragment {
@@ -44,16 +58,17 @@ public class MapFragment extends Fragment {
     private ImageView myLocationImage;//定位图标
     private final String TAG = "BaiduFragment";
 
+    MapViewModel mapViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {super.onCreate(savedInstanceState);}
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    if(view == null){
+        if(view == null){
             view = inflater.inflate(R.layout.fragment_map, container, false);
         }
-
+        mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
         mapView = view.findViewById(R.id.baiduMapView);
         myLocationImage = view.findViewById(R.id.my_location);
         try {
@@ -62,6 +77,7 @@ public class MapFragment extends Fragment {
             e.printStackTrace();
         }
         mapView.onCreate(getContext(), savedInstanceState);
+        addShopInfoOverlay();
         Log.e(TAG, "onCreateView: ");
         return view;
     }
@@ -128,6 +144,31 @@ public class MapFragment extends Fragment {
         Log.e(TAG, "initMap: ");
     }
 
+    public void addShopInfoOverlay() {
+        List<ShopInfo> shopInfoList = new ArrayList<>();
+        baiduMap.clear();
+        LatLng latLng = null;
+        OverlayOptions overlayOptions = null;
+        BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_marka);
+
+        MyAsyncTasks myAsyncTasks = new MyAsyncTasks();
+        try {
+            shopInfoList = myAsyncTasks.execute().get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        Log.d(TAG, "addShopInfoOverlay: " + shopInfoList.size());
+
+        for(ShopInfo item : shopInfoList){
+            Log.d(TAG, "addShopInfoOverlay: " + item.getShopLatitude());
+            latLng = new LatLng(item.getShopLatitude(), item.getShopLongitude());
+            overlayOptions = new MarkerOptions().position(latLng).icon(bitmap);
+            baiduMap.addOverlay(overlayOptions);
+        };
+
+    }
+
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
@@ -171,5 +212,19 @@ public class MapFragment extends Fragment {
         super.onDestroy();
         mapView.onDestroy();
         Log.e(TAG, "onDestroy: ");
+    }
+
+    public class MyAsyncTasks extends AsyncTask<Void, Void, List<ShopInfo>> {
+
+        @Override
+        protected List<ShopInfo> doInBackground(Void... params) {
+            ShopInfoApi shopInfoService = RequestUtils.getService(ShopInfoApi.class);
+            return shopInfoService.getAllShopInfo().getData();
+        }
+
+        @Override
+        protected void onPostExecute(List<ShopInfo> shopInfo) {
+            mapViewModel.setShopInfo(shopInfo);
+        }
     }
 }

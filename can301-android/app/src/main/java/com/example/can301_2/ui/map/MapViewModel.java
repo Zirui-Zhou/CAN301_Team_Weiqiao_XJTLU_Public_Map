@@ -4,16 +4,25 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.can301_2.domain.ShopInfo;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class MapViewModel extends ViewModel {
 
-    private final MutableLiveData<String> mText;
+    private final MutableLiveData<List<ShopInfo>> shopInfo;
 
     public MapViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is dashboard fragment");
+        shopInfo = new MutableLiveData<>();
+        shopInfo.setValue(new ArrayList<>());
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public LiveData<List<ShopInfo>> getShopInfo() {
+        return shopInfo;
+    }
+
+    public void setShopInfo(List<ShopInfo> shopInfo) {
+        this.shopInfo.setValue(shopInfo);
     }
 }
