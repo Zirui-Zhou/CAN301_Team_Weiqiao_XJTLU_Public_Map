@@ -20,7 +20,12 @@
         android:id="@+id/navigation_map"
         android:name="com.example.can301_2.ui.map.MapFragment"
         android:label="@string/title_map"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_map" >
+        <action
+            android:id="@+id/action_navigation_home_to_navigation_detail3"
+            app:destination="@id/navigation_detail"
+            app:popUpTo="@id/navigation_map" />
+    </fragment>
 
     <fragment
         android:id="@+id/navigation_user"

@@ -4,6 +4,8 @@ package com.example.can301_2.ui.map;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +16,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.Navigation;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -25,6 +28,7 @@ import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationData;
@@ -164,9 +168,25 @@ public class MapFragment extends Fragment {
             Log.d(TAG, "addShopInfoOverlay: " + item.getShopLatitude());
             latLng = new LatLng(item.getShopLatitude(), item.getShopLongitude());
             overlayOptions = new MarkerOptions().position(latLng).icon(bitmap);
-            baiduMap.addOverlay(overlayOptions);
-        };
+            Log.e("MapFragment", "add Marker: " + item.getShopId());
+            Bundle bundle = new Bundle();
+            bundle.putLong("shop_id", item.getShopId());
+            Marker marker = (Marker) baiduMap.addOverlay(overlayOptions);
+            marker.setExtraInfo(bundle);
+        }
+        initListener();
+    }
 
+    private void initListener() {
+        baiduMap.setOnMarkerClickListener(new BaiduMap.OnMarkerClickListener() {
+            @Override
+            public boolean onMarkerClick(Marker marker) {
+                Bundle bundle = marker.getExtraInfo();
+                Log.e("MapFragment", "onClick: " + bundle.getString("shop_id"));
+                Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_navigation_detail3, bundle);
+                return true;
+            }
+        });
     }
 
     @Override

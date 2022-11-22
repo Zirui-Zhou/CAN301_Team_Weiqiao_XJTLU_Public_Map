@@ -1,7 +1,6 @@
 package com.example.can301_2.adapter;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +31,7 @@ public class ShopCardAdapter extends RecyclerView.Adapter<ShopCardAdapter.ShopCa
     @Override
     public ShopCardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
-        View itemView = layoutInflater.inflate(R.layout.shop_card, parent, false);
+        View itemView = layoutInflater.inflate(R.layout.recycleitem_shop_card, parent, false);
         return new ShopCardViewHolder(itemView);
     }
 
