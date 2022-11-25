@@ -37,4 +37,6 @@ public class ShopInfo {
 
     private Double shopLongitude;
 
+    private Long shopTypeId;
+
 }

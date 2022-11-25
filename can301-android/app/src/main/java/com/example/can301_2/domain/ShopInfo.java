@@ -48,4 +48,7 @@ public class ShopInfo {
     @SerializedName("shopDetailImages")
     private List<String> shopDetailImages;
 
+    @SerializedName("shopTypeId")
+    private Long shopTypeId;
+
 }

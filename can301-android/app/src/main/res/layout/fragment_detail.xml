@@ -115,7 +115,7 @@
                     app:srcCompat="@drawable/ic_baseline_arrow_forward_ios_24" />
 
                 <TextView
-                    android:id="@+id/detail"
+                    android:id="@+id/detail_shop_item_info_list"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_toLeftOf="@+id/detail_arrow"

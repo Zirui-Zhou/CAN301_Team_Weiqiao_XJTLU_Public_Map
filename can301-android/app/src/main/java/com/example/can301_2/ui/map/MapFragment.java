@@ -1,24 +1,17 @@
 package com.example.can301_2.ui.map;
 
 
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
 import android.widget.RatingBar;
@@ -48,11 +41,9 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.bumptech.glide.Glide;
-import com.example.can301_2.MainActivity;
 import com.example.can301_2.R;
 import com.example.can301_2.api.ShopInfoApi;
 import com.example.can301_2.domain.ShopInfo;
-import com.example.can301_2.ui.home.HomeViewModel;
 import com.example.can301_2.utils.RequestUtils;
 
 import java.util.ArrayList;

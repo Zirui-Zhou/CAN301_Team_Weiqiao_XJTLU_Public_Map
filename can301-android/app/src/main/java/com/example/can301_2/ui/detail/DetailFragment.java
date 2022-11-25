@@ -1,22 +1,9 @@
 package com.example.can301_2.ui.detail;
 
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-
 import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.media.Rating;
-import android.os.AsyncTask;
 import android.os.Bundle;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.navigation.Navigation;
-import androidx.recyclerview.widget.DividerItemDecoration;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,21 +12,28 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.DividerItemDecoration;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.bumptech.glide.Glide;
 import com.example.can301_2.R;
 import com.example.can301_2.adapter.ImageGalleryAdapter;
+import com.example.can301_2.adapter.ItemCardAdapter;
+import com.example.can301_2.api.ItemInfoApi;
 import com.example.can301_2.api.ShopInfoApi;
 import com.example.can301_2.databinding.FragmentAnotherDetailBinding;
-import com.example.can301_2.databinding.FragmentDetailBinding;
-import com.example.can301_2.databinding.FragmentHomeBinding;
+import com.example.can301_2.domain.ItemInfo;
 import com.example.can301_2.domain.ShopInfo;
-import com.example.can301_2.ui.home.HomeFragment;
-import com.example.can301_2.ui.home.HomeViewModel;
 import com.example.can301_2.utils.RequestUtils;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class DetailFragment extends Fragment {
     String TAG = "detail";
@@ -65,6 +59,7 @@ public class DetailFragment extends Fragment {
         TextView textViewShopName = binding.detailShopName;
         RatingBar ratingBarShopRating = binding.detailShopRating;
         RecyclerView recyclerViewShopDetailImage = binding.detailShopDetailImageList;
+        RecyclerView recyclerViewItemInfo = binding.detailShopItemInfoList;
 
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerViewShopDetailImage.getContext(), LinearLayoutManager.HORIZONTAL) {
             @Override
@@ -93,27 +88,37 @@ public class DetailFragment extends Fragment {
         assert getArguments() != null;
         long shopId = getArguments().getLong("shop_id");
 
-        MyAsyncTasks myAsyncTasks = new MyAsyncTasks();
-        try {
-            ShopInfo shopInfo = myAsyncTasks.execute(shopId).get();
-            Glide
-                    .with(getContext())
-                    .load(RequestUtils.baseStaticUrl + shopInfo.getShopCoverImage())
-                    .into(imageViewShopCover);
-            textViewShopName.setText(shopInfo.getShopName());
-            ratingBarShopRating.setRating(shopInfo.getShopRating().floatValue());
-            imageGalleryAdapter.setImageUrls(shopInfo.getShopDetailImages());
-            imageGalleryAdapter.notifyDataSetChanged();
-        } catch (ExecutionException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        ItemCardAdapter itemCardAdapter = new ItemCardAdapter();
+        recyclerViewItemInfo.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerViewItemInfo.setAdapter(itemCardAdapter);
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            ShopInfoApi shopInfoService = RequestUtils.getService(ShopInfoApi.class);
+            ShopInfo shopInfo = shopInfoService.getShopInfoById(shopId).getData();
+//            detailViewModel.setShopInfo(shopInfo);
+
+            ItemInfoApi itemInfoService = RequestUtils.getService(ItemInfoApi.class);
+            List<ItemInfo> itemInfoList = itemInfoService.getItemInfoByShopId(shopId).getData();
+//            detailViewModel.setItemInfoList(itemInfoList);
+
+            handler.post(() -> {
+                Glide.with(getContext())
+                        .load(RequestUtils.baseStaticUrl + shopInfo.getShopCoverImage())
+                        .into(imageViewShopCover);
+                textViewShopName.setText(shopInfo.getShopName());
+                ratingBarShopRating.setRating(shopInfo.getShopRating().floatValue());
+                imageGalleryAdapter.setImageUrls(shopInfo.getShopDetailImages());
+                imageGalleryAdapter.notifyDataSetChanged();
+                itemCardAdapter.setItemInfoList(itemInfoList);
+                itemCardAdapter.notifyDataSetChanged();
+            });
+        });
 
         return root;
     }
-
-
 
     @Override
     public void onStop() {
@@ -122,18 +127,4 @@ public class DetailFragment extends Fragment {
         super.onStop();
     }
 
-
-    public class MyAsyncTasks extends AsyncTask<Long, Void, ShopInfo> {
-
-        @Override
-        protected ShopInfo doInBackground(Long... id) {
-            ShopInfoApi shopInfoService = RequestUtils.getService(ShopInfoApi.class);
-            return shopInfoService.getShopInfoById(id[0]).getData();
-        }
-
-        @Override
-        protected void onPostExecute(ShopInfo shopInfo) {
-            detailViewModel.setShopInfo(shopInfo);
-        }
-    }
 }

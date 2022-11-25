@@ -37,7 +37,7 @@
                 app:layout_constraintGuide_percent="0.95" />
 
             <ImageView
-                android:id="@+id/shopCoverImage"
+                android:id="@+id/item_card_image"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:scaleType="centerCrop"
@@ -67,49 +67,30 @@
                 android:layout_height="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/guideline11"
-                app:layout_constraintStart_toEndOf="@+id/shopCoverImage"
+                app:layout_constraintStart_toEndOf="@+id/item_card_image"
                 app:layout_constraintTop_toTopOf="parent">
 
-                <RatingBar
-                    android:id="@+id/shopRating"
-                    style="@style/Widget.AppCompat.RatingBar.Small"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    app:layout_constraintBottom_toTopOf="@+id/shopSales"
-                    app:layout_constraintStart_toStartOf="@+id/shopName"
-                    app:layout_constraintTop_toBottomOf="@+id/shopName" />
-
                 <TextView
-                    android:id="@+id/shopSales"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="@+id/shopRating"
-                    app:layout_constraintTop_toBottomOf="@+id/shopRating"
-                    tools:text="月售：1" />
-
-                <TextView
-                    android:id="@+id/shopName"
+                    android:id="@+id/item_card_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="32dp"
-                    android:text="TextView"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/item_card_name"
+                    tools:text="月售：1" />
+
+                <TextView
+                    android:id="@+id/item_card_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="32dp"
                     android:textSize="16sp"
-                    app:layout_constraintBottom_toTopOf="@+id/shopRating"
+                    app:layout_constraintBottom_toTopOf="@+id/item_card_price"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="曦曦的甜蜜小屋" />
 
-                <TextView
-                    android:id="@+id/shopDescription"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TextView"
-                    app:layout_constraintBottom_toBottomOf="@+id/shopSales"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.813"
-                    app:layout_constraintStart_toEndOf="@+id/shopSales" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

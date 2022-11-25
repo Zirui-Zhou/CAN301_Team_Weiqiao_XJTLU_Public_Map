@@ -37,4 +37,6 @@ public class ShopInfoVo {
 
     private List<String> shopDetailImages;
 
+    private Long shopTypeId;
+
 }
