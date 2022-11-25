@@ -4,6 +4,7 @@ package com.example.can301_2.ui.map;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcel;
@@ -14,6 +15,9 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.PopupWindow;
@@ -44,6 +48,7 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.bumptech.glide.Glide;
+import com.example.can301_2.MainActivity;
 import com.example.can301_2.R;
 import com.example.can301_2.api.ShopInfoApi;
 import com.example.can301_2.domain.ShopInfo;
@@ -104,7 +109,7 @@ public class MapFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 locClient.requestLocation();
-                LatLng ll =new LatLng(lat,lon);
+                LatLng ll = new LatLng(lat, lon);
                 MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(ll);
                 baiduMap.animateMapStatus(u);
                 baiduMap.setMapStatus(u);
@@ -173,8 +178,8 @@ public class MapFragment extends Fragment {
     public void addShopInfoOverlay() {
         shopInfoList = new ArrayList<>();
         baiduMap.clear();
-        LatLng latLng = null;
-        OverlayOptions overlayOptions = null;
+        LatLng latLng;
+        OverlayOptions overlayOptions;
         BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_marka);
 
         MyAsyncTasks myAsyncTasks = new MyAsyncTasks();
@@ -186,17 +191,17 @@ public class MapFragment extends Fragment {
 
         Log.d(TAG, "addShopInfoOverlay: " + shopInfoList.size());
 
-        int index = 0;
+        int position = 0;
         for(ShopInfo item: shopInfoList){
             Log.d(TAG, "addShopInfoOverlay: " + item.getShopLatitude());
             latLng = new LatLng(item.getShopLatitude(), item.getShopLongitude());
             overlayOptions = new MarkerOptions().position(latLng).icon(bitmap);
             Log.e("MapFragment", "add Marker: " + item.getShopId());
             Bundle bundle = new Bundle();
-            bundle.putInt("index", index);
+            bundle.putInt("position", position);
             Marker marker = (Marker) baiduMap.addOverlay(overlayOptions);
             marker.setExtraInfo(bundle);
-            index++;
+            position++;
         }
         initListener();
     }
@@ -209,25 +214,27 @@ public class MapFragment extends Fragment {
                     popupWindow.dismiss();
                 }
                 Bundle bundle = marker.getExtraInfo();
-                initPopWindow(bundle.getInt("index"));
+                Log.e(TAG, "onMarkerClick: " + bundle.getInt("position"));
+                initPopupWindow(bundle.getInt("position"));
                 return true;
             }
         });
     }
 
-    @SuppressLint("DefaultLocale")
-    private void initPopWindow(int index) {
+    private void initPopupWindow(int position) {
         View itemView = LayoutInflater.from(getContext()).inflate(R.layout.recycleitem_shop_card, null, false);
 
         popupWindow = new PopupWindow(itemView, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT, true);
-        popupWindow.setTouchable(true);
-        popupWindow.setTouchInterceptor(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                return false;
-            }
-        });
-        popupWindow.showAsDropDown(view, 0, -400);
+
+        popupWindow.setOutsideTouchable(true);
+
+        TranslateAnimation animation = new TranslateAnimation(
+                Animation.RELATIVE_TO_PARENT, 0,
+                Animation.RELATIVE_TO_PARENT, 0,
+                Animation.RELATIVE_TO_PARENT, 1,
+                Animation.RELATIVE_TO_PARENT, 0);
+        animation.setInterpolator(new AccelerateInterpolator());
+        animation.setDuration(400);
 
         TextView textViewShopName = itemView.findViewById(R.id.shopName);
         TextView textViewShopSales = itemView.findViewById(R.id.shopSales);
@@ -236,27 +243,38 @@ public class MapFragment extends Fragment {
         TextView textViewShopDescription = itemView.findViewById(R.id.shopDescription);
         CardView cardView = itemView.findViewById(R.id.shop_card);
 
-        ShopInfo shopInfo = shopInfoList.get(index);
+        ShopInfo shopInfo = shopInfoList.get(position);
+
+        LatLng ll = new LatLng(shopInfo.getShopLatitude(), shopInfo.getShopLongitude());
+        MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(ll);
+        baiduMap.animateMapStatus(u);
+        baiduMap.setMapStatus(u);
+        MapStatusUpdate u1 = MapStatusUpdateFactory.zoomTo(20f);        //缩放
+        baiduMap.animateMapStatus(u1);
+
         textViewShopName.setText(shopInfo.getShopName());
         textViewShopSales.setText(itemView.getContext().getString(R.string.shop_sales, shopInfo.getShopSales()));
         textViewShopDescription.setText(shopInfo.getShopDescription());
         ratingBarShopRating.setRating(shopInfo.getShopRating().floatValue());
         Glide.with(itemView).load(RequestUtils.baseStaticUrl + shopInfo.getShopCoverImage()).into(imageViewShopCoverImage);
-        Log.e(TAG, "initPopWindow: ");
         cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 popupWindow.dismiss();
                 Bundle bundle = new Bundle();
                 bundle.putLong("shop_id", shopInfo.getShopId());
+                Log.e(TAG, "onClick: " + shopInfo.getShopId());
                 Navigation.findNavController(view).navigate(R.id.action_navigation_home_to_navigation_detail3, bundle);
             }
         });
-    }
 
-    private void initAlertDialog(int index) {
-        View v = LayoutInflater.from(getContext()).inflate(R.layout.popwindow_map, null, false);
+        int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
+        itemView.measure(width, height);
 
+        popupWindow.showAtLocation(view, Gravity.CENTER_HORIZONTAL, 0, itemView.getMeasuredHeight());
+        itemView.startAnimation(animation);
+        Log.e(TAG, "initPopupWindow: animation");
     }
 
     @Override
