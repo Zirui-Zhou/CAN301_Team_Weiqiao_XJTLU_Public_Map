@@ -1,5 +1,7 @@
 package com.example.can301_2.domain;
 
+import android.graphics.Bitmap;
+
 import com.google.gson.annotations.SerializedName;
 
 import lombok.Data;
@@ -17,6 +19,11 @@ public class ShopType {
 
     @SerializedName("shopTypeImage")
     private String shopTypeImage;
+
+    @SerializedName("shopTypeMarkerIcon")
+    private String shopTypeMarkerIcon;
+
+    private Bitmap shopTypeMarkerIconBitmap;
 
 }
 

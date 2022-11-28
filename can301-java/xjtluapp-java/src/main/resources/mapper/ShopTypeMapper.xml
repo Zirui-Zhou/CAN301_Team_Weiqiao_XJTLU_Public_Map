@@ -5,7 +5,7 @@
 <mapper namespace="com.groupa15.mapper.ShopTypeMapper">
     <select id="selectAllShopType" resultType="ShopTypeVo">
 
-        SELECT t.shop_type_id, t.shop_type_name, t.shop_type_image
+        SELECT t.shop_type_id, t.shop_type_name, t.shop_type_image, t.shop_type_marker_icon
         FROM can301.shop_type t
 
     </select>

@@ -2,8 +2,11 @@ package com.example.can301_2.ui.map;
 
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -42,13 +45,19 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.bumptech.glide.Glide;
 import com.example.can301_2.R;
+import com.example.can301_2.api.ItemInfoApi;
 import com.example.can301_2.api.ShopInfoApi;
+import com.example.can301_2.domain.ItemInfo;
 import com.example.can301_2.domain.ShopInfo;
+import com.example.can301_2.domain.ShopType;
 import com.example.can301_2.utils.RequestUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 
 public class MapFragment extends Fragment {
@@ -89,7 +98,33 @@ public class MapFragment extends Fragment {
             e.printStackTrace();
         }
         mapView.onCreate(getContext(), savedInstanceState);
-        addShopInfoOverlay();
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            ShopInfoApi shopInfoApi = RequestUtils.getService(ShopInfoApi.class);
+            List<ShopType> shopTypeList = shopInfoApi.getAllShopType().getData();
+            for(ShopType shopType : shopTypeList) {
+                try {
+                    shopType.setShopTypeMarkerIconBitmap(
+                            Glide.with(getContext())
+                                    .asBitmap()
+                                    .load(RequestUtils.baseStaticUrl + shopType.getShopTypeMarkerIcon())
+                                    .submit()
+                                    .get()
+                    );
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            handler.post(() -> {
+                mapViewModel.setShopTypeList(shopTypeList);
+            });
+            addShopInfoOverlay();
+        });
+
         Log.e(TAG, "onCreateView: ");
         return view;
     }
@@ -171,7 +206,6 @@ public class MapFragment extends Fragment {
         baiduMap.clear();
         LatLng latLng;
         OverlayOptions overlayOptions;
-        BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_marka);
 
         MyAsyncTasks myAsyncTasks = new MyAsyncTasks();
         try {
@@ -186,6 +220,17 @@ public class MapFragment extends Fragment {
         for(ShopInfo item: shopInfoList){
             Log.d(TAG, "addShopInfoOverlay: " + item.getShopLatitude());
             latLng = new LatLng(item.getShopLatitude(), item.getShopLongitude());
+            Bitmap bit = null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                bit = mapViewModel.getShopTypeList()
+                        .getValue()
+                        .stream()
+                        .filter(type-> Objects.equals(type.getShopTypeId(), item.getShopTypeId()))
+                        .findFirst()
+                        .get()
+                        .getShopTypeMarkerIconBitmap();
+            }
+            BitmapDescriptor bitmap = BitmapDescriptorFactory.fromBitmap(bit);
             overlayOptions = new MarkerOptions().position(latLng).icon(bitmap);
             Log.e("MapFragment", "add Marker: " + item.getShopId());
             Bundle bundle = new Bundle();
@@ -240,7 +285,7 @@ public class MapFragment extends Fragment {
         MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(ll);
         baiduMap.animateMapStatus(u);
         baiduMap.setMapStatus(u);
-        MapStatusUpdate u1 = MapStatusUpdateFactory.zoomTo(20f);        //缩放
+        MapStatusUpdate u1 = MapStatusUpdateFactory.zoomTo(25f);        //缩放
         baiduMap.animateMapStatus(u1);
 
         textViewShopName.setText(shopInfo.getShopName());
