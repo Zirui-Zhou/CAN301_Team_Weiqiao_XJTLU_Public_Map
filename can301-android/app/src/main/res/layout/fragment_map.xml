@@ -12,15 +12,24 @@
         android:layout_height="match_parent"
         android:clickable="true" />
 
-    <ImageView
-        android:id="@+id/my_location"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:layout_alignParentRight="true"
-        android:layout_marginTop="20dp"
-        android:layout_marginRight="10dp"
-        android:clickable="true"
-        app:srcCompat="@drawable/ic_baseline_my_location_24"
-        app:tint="@color/black" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/my_location"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:layout_alignParentRight="true"
+            android:clickable="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.957"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.431"
+            app:srcCompat="@drawable/ic_baseline_my_location_24"
+            app:tint="@color/black" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

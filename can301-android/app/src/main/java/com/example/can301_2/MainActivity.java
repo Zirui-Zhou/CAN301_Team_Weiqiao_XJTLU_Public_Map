@@ -84,6 +84,10 @@ public class MainActivity extends AppCompatActivity{
     public boolean onSupportNavigateUp() {
         return Navigation.findNavController(this, R.id.nav_host_fragment_activity_main).navigateUp();
     }
+    
+    public int getBarHeight() {
+        return navView.getMeasuredHeight();
+    }
 
 
     public int getBarHeight() {

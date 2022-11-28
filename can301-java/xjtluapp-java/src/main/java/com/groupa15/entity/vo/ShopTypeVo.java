@@ -15,4 +15,6 @@ public class ShopTypeVo {
 
     private String shopTypeImage;
 
+    private String shopTypeMarkerIcon;
+
 }

@@ -21,4 +21,5 @@ public class ShopType {
 
     private String shopTypeImage;
 
+    private String shopTypeMarkerIcon;
 }
