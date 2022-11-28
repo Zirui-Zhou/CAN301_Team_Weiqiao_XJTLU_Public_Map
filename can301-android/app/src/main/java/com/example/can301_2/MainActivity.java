@@ -88,9 +88,4 @@ public class MainActivity extends AppCompatActivity{
     public int getBarHeight() {
         return navView.getMeasuredHeight();
     }
-
-
-    public int getBarHeight() {
-        return navView.getMeasuredHeight();
-    }
 }
