@@ -2,6 +2,7 @@ package com.example.can301_2.ui.map;
 
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -44,6 +45,7 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.bumptech.glide.Glide;
+import com.example.can301_2.MainActivity;
 import com.example.can301_2.R;
 import com.example.can301_2.api.ItemInfoApi;
 import com.example.can301_2.api.ShopInfoApi;
