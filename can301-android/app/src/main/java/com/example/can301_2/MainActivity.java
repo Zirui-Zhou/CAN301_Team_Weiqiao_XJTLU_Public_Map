@@ -1,7 +1,5 @@
 package com.example.can301_2;
 
-import static androidx.navigation.ui.NavigationUI.onNavDestinationSelected;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -19,7 +17,6 @@ import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -28,13 +25,13 @@ import com.example.can301_2.databinding.ActivityMainBinding;
 import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.navigation.NavigationBarView;
 
 
 public class MainActivity extends AppCompatActivity{
 
     private final String TAG = "MainActivity";
     private ActivityMainBinding binding;
+    private BottomNavigationView navView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +57,7 @@ public class MainActivity extends AppCompatActivity{
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        BottomNavigationView navView = findViewById(R.id.nav_view);
+        navView = findViewById(R.id.nav_view);
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
@@ -69,14 +66,6 @@ public class MainActivity extends AppCompatActivity{
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
-        navView.setOnItemSelectedListener(item -> {
-            Log.d(TAG, String.valueOf(item));
-            // Note that here can only go back one step in navigation.
-            navController.navigateUp();
-            onNavDestinationSelected(item, navController);
-            return true;
-        });
-
     }
 
 
@@ -96,4 +85,8 @@ public class MainActivity extends AppCompatActivity{
         return Navigation.findNavController(this, R.id.nav_host_fragment_activity_main).navigateUp();
     }
 
+
+    public int getBarHeight() {
+        return navView.getMeasuredHeight();
+    }
 }

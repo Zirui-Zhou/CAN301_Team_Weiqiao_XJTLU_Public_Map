@@ -2,6 +2,7 @@ package com.example.can301_2.ui.map;
 
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -41,6 +42,7 @@ import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.bumptech.glide.Glide;
+import com.example.can301_2.MainActivity;
 import com.example.can301_2.R;
 import com.example.can301_2.api.ShopInfoApi;
 import com.example.can301_2.domain.ShopInfo;
@@ -83,6 +85,7 @@ public class MapFragment extends Fragment {
         mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
         mapView = view.findViewById(R.id.baiduMapView);
         myLocationImage = view.findViewById(R.id.my_location);
+
         try {
             initMap();
         } catch (Exception e) {
@@ -93,6 +96,7 @@ public class MapFragment extends Fragment {
         Log.e(TAG, "onCreateView: ");
         return view;
     }
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -151,6 +155,7 @@ public class MapFragment extends Fragment {
         locClient = new LocationClient(getActivity().getApplicationContext());
         locClient.registerLocationListener(new MyLocationListener());
         baiduMap = mapView.getMap();
+        baiduMap.getUiSettings().setRotateGesturesEnabled(false);// forbidden rotate
         baiduMap.setMyLocationEnabled(true);
         LocationClientOption option = new LocationClientOption();
         option.setOpenGps(true);
@@ -166,7 +171,7 @@ public class MapFragment extends Fragment {
 
     }
 
-    public void addShopInfoOverlay() {
+    private void addShopInfoOverlay() {
         shopInfoList = new ArrayList<>();
         baiduMap.clear();
         LatLng latLng;
@@ -263,9 +268,23 @@ public class MapFragment extends Fragment {
         int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
         itemView.measure(width, height);
 
-        popupWindow.showAtLocation(view, Gravity.CENTER_HORIZONTAL, 0, itemView.getMeasuredHeight());
+        //itemView.getMeasuredHeight()
+        MainActivity mainActivity = (MainActivity) getActivity();
+        Log.e(TAG, "initPopupWindow: " + mainActivity.getBarHeight());
+        popupWindow.showAtLocation(view, Gravity.BOTTOM, 0, mainActivity.getBarHeight() + getNavigationBarHeight(getContext()));
         itemView.startAnimation(animation);
         Log.e(TAG, "initPopupWindow: animation");
+    }
+
+    private int getNavigationBarHeight(Context context) {
+        int result = 0;
+        Resources res = context.getResources();
+        int resourceId = res.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = res.getDimensionPixelSize(resourceId);
+        }
+        Log.e("TAG", "getNavigationBarHeight: " + result);
+        return result;
     }
 
     @Override
