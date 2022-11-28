@@ -304,13 +304,23 @@ public class MapFragment extends Fragment {
             }
         });
 
-        int width = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        int height = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED);
-        itemView.measure(width, height);
-
-        popupWindow.showAtLocation(view, Gravity.CENTER_HORIZONTAL, 0, itemView.getMeasuredHeight());
+        MainActivity mainActivity = (MainActivity) getActivity();
+        Log.e(TAG, "initPopupWindow: " + mainActivity.getBarHeight());
+        popupWindow.showAtLocation(view, Gravity.BOTTOM, 0, mainActivity.getBarHeight() + getNavigationBarHeight(getContext()));
+        
         itemView.startAnimation(animation);
         Log.e(TAG, "initPopupWindow: animation");
+    }
+    
+    private int getNavigationBarHeight(Context context) {
+        int result = 0;
+        Resources res = context.getResources();
+        int resourceId = res.getIdentifier("navigation_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = res.getDimensionPixelSize(resourceId);
+        }
+        Log.e("TAG", "getNavigationBarHeight: " + result);
+        return result;
     }
 
     @Override
