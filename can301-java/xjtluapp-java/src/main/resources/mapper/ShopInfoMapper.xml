@@ -34,6 +34,11 @@
         WHERE s.shop_id = #{shopId}
     </select>
 
+    <select id="selectShopInfoByShopTypeId" resultMap="ShopInfoMap">
+        <include refid="selectShopInfo"/>
+        WHERE s.shop_type_id = #{shopTypeId}
+    </select>
+
     <sql id="selectShopInfo">
         SELECT s.shop_id, s.shop_name, s.shop_rating, s.shop_sales, s.shop_cover_image,
                s.shop_open_time, s.shop_close_time, s.shop_description,

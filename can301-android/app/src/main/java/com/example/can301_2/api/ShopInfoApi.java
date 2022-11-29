@@ -18,6 +18,9 @@ public interface ShopInfoApi {
     @GET("/shopinfo")
     CommonResponse<ShopInfo> getShopInfoById(@Query("id") Long shop_id);
 
+    @GET("/shopinfo")
+    CommonResponse<List<ShopInfo>> getShopInfoByShopTypeId(@Query("type_id") Long type_id);
+
     @GET("/shoptype")
     CommonResponse<List<ShopType>> getAllShopType();
 

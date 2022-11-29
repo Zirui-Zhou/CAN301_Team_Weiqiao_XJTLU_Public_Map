@@ -43,6 +43,12 @@ public class ShopInfoController {
         return Response.success(HttpStatus.OK, null, shopInfoVo);
     }
 
+    @GetMapping(value = "/shopinfo", params = "type_id")
+    public Response getShopInfoByShopTypeId(@RequestParam(name = "type_id") Long type_id) {
+        List<ShopInfoVo> shopInfoVoList = shopInfoService.getShopInfoByShopTypeId(type_id);
+        return Response.success(HttpStatus.OK, null, shopInfoVoList);
+    }
+
     @GetMapping(value = "/shoptype")
     public Response getAllShopType() {
         List<ShopTypeVo> shopTypeVoList = shopTypeService.getAllShopType();
