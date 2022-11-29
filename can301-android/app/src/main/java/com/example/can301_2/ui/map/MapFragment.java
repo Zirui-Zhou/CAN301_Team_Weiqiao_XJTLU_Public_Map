@@ -114,6 +114,8 @@ public class MapFragment extends Fragment {
         executor.execute(() -> {
             ShopInfoApi shopInfoApi = RequestUtils.getService(ShopInfoApi.class);
             shopTypeList = shopInfoApi.getAllShopType().getData();
+            ShopInfoApi shopInfoService = RequestUtils.getService(ShopInfoApi.class);
+            List<ShopInfo> shopInfoList = shopInfoService.getAllShopInfo().getData();
 
             for(ShopType shopType : shopTypeList) {
                 try {
@@ -131,9 +133,11 @@ public class MapFragment extends Fragment {
 
             handler.post(() -> {
                 mapViewModel.setShopTypeList(shopTypeList);
+                mapViewModel.setShopInfo(shopInfoList);
+                addShopInfoOverlay(-1);
                 initClassification();
             });
-            addShopInfoOverlay(-1);
+
         });
 
         Log.e(TAG, "onCreateView: ");
@@ -214,26 +218,19 @@ public class MapFragment extends Fragment {
     }
 
     public void addShopInfoOverlay(long typeId) {
-        shopInfoList = new ArrayList<>();
+        shopInfoList = mapViewModel.getShopInfo().getValue();
         baiduMap.clear();
         LatLng latLng;
         OverlayOptions overlayOptions;
 
-        MyAsyncTasks myAsyncTasks = new MyAsyncTasks();
-        try {
-            shopInfoList = myAsyncTasks.execute().get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-        }
-
         Log.d(TAG, "addShopInfoOverlay: " + shopInfoList.size());
 
-        int position = 0;
-        for(ShopInfo item: shopInfoList){
+        for(int position = 0; position < shopInfoList.size(); position++){
+            ShopInfo item = shopInfoList.get(position);
             if(typeId != -1 && item.getShopTypeId() != typeId) {
                 continue;
             }
-            Log.d(TAG, "addShopInfoOverlay: " + item.getShopLatitude());
+
             latLng = new LatLng(item.getShopLatitude(), item.getShopLongitude());
             Bitmap bit = null;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
@@ -247,12 +244,11 @@ public class MapFragment extends Fragment {
             }
             BitmapDescriptor bitmap = BitmapDescriptorFactory.fromBitmap(bit);
             overlayOptions = new MarkerOptions().position(latLng).icon(bitmap);
-            Log.e("MapFragment", "add Marker: " + item.getShopId());
+//            Log.e("MapFragment", "add Marker: " + item.getShopId());
             Bundle bundle = new Bundle();
             bundle.putInt("position", position);
             Marker marker = (Marker) baiduMap.addOverlay(overlayOptions);
             marker.setExtraInfo(bundle);
-            position++;
         }
         initListener();
     }
@@ -431,17 +427,4 @@ public class MapFragment extends Fragment {
         Log.e(TAG, "onDestroy: ");
     }
 
-    public class MyAsyncTasks extends AsyncTask<Void, Void, List<ShopInfo>> {
-
-        @Override
-        protected List<ShopInfo> doInBackground(Void... params) {
-            ShopInfoApi shopInfoService = RequestUtils.getService(ShopInfoApi.class);
-            return shopInfoService.getAllShopInfo().getData();
-        }
-
-        @Override
-        protected void onPostExecute(List<ShopInfo> shopInfo) {
-            mapViewModel.setShopInfo(shopInfo);
-        }
-    }
 }
