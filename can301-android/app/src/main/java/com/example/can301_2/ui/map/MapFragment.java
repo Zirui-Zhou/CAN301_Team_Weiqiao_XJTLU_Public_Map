@@ -31,6 +31,8 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.Navigation;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
@@ -50,9 +52,13 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.bumptech.glide.Glide;
 import com.example.can301_2.MainActivity;
+import com.example.can301_2.MainViewModel;
 import com.example.can301_2.R;
+import com.example.can301_2.adapter.CategoryItemAdapter;
 import com.example.can301_2.api.ItemInfoApi;
 import com.example.can301_2.api.ShopInfoApi;
+import com.example.can301_2.databinding.FragmentHomeBinding;
+import com.example.can301_2.databinding.FragmentMapBinding;
 import com.example.can301_2.domain.ItemInfo;
 import com.example.can301_2.domain.ShopInfo;
 import com.example.can301_2.domain.ShopType;
@@ -67,8 +73,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
-public class MapFragment extends Fragment {
-
+public class MapFragment extends Fragment implements CategoryItemAdapter.EventListener{
+    private FragmentMapBinding binding;
     private View view;
     private MapView mapView;
     private BaiduMap baiduMap;
@@ -82,13 +88,14 @@ public class MapFragment extends Fragment {
     private double lon;
 
     private ImageView myLocationImage;//定位图标
+    private RecyclerView recyclerViewMapShopType;
+    CategoryItemAdapter mapShopTypeAdapter;
     private final String TAG = "BaiduFragment";
     private List<ShopInfo> shopInfoList;
     private PopupWindow popupWindow;
 
-    private List<ShopType> shopTypeList;
-
     MapViewModel mapViewModel;
+    MainViewModel mainViewModel;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {super.onCreate(savedInstanceState);}
@@ -98,7 +105,17 @@ public class MapFragment extends Fragment {
         if(view == null){
             view = inflater.inflate(R.layout.fragment_map, container, false);
         }
+
+        binding = FragmentMapBinding.inflate(inflater, container, false);
+
         mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
+        mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
+
+        mainViewModel.getShopTypeMap().observe(getViewLifecycleOwner(), shopTypeMap -> {
+            mapShopTypeAdapter.setShopTypeList(new ArrayList<>(shopTypeMap.values()));
+            mapShopTypeAdapter.notifyDataSetChanged();
+        });
+
         mapView = view.findViewById(R.id.baiduMapView);
         myLocationImage = view.findViewById(R.id.my_location);
         try {
@@ -108,39 +125,25 @@ public class MapFragment extends Fragment {
         }
         mapView.onCreate(getContext(), savedInstanceState);
 
+        recyclerViewMapShopType = view.findViewById(R.id.map_shop_type_list);
+        mapShopTypeAdapter = new CategoryItemAdapter(this);
+        recyclerViewMapShopType.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        recyclerViewMapShopType.setAdapter(mapShopTypeAdapter);
+
         ExecutorService executor = Executors.newSingleThreadExecutor();
         Handler handler = new Handler(Looper.getMainLooper());
 
         executor.execute(() -> {
-            ShopInfoApi shopInfoApi = RequestUtils.getService(ShopInfoApi.class);
-            shopTypeList = shopInfoApi.getAllShopType().getData();
             ShopInfoApi shopInfoService = RequestUtils.getService(ShopInfoApi.class);
             List<ShopInfo> shopInfoList = shopInfoService.getAllShopInfo().getData();
 
-            for(ShopType shopType : shopTypeList) {
-                try {
-                    shopType.setShopTypeMarkerIconBitmap(
-                            Glide.with(getContext())
-                                    .asBitmap()
-                                    .load(RequestUtils.baseStaticUrl + shopType.getShopTypeMarkerIcon())
-                                    .submit()
-                                    .get()
-                    );
-                } catch (ExecutionException | InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
             handler.post(() -> {
-                mapViewModel.setShopTypeList(shopTypeList);
                 mapViewModel.setShopInfo(shopInfoList);
                 addShopInfoOverlay(-1);
-                initClassification();
             });
 
         });
 
-        Log.e(TAG, "onCreateView: ");
         return view;
     }
     @Override
@@ -158,6 +161,11 @@ public class MapFragment extends Fragment {
                 baiduMap.animateMapStatus(u1);
             }
         });
+    }
+
+    @Override
+    public void updateShopInfoListByType(ShopType shopType) {
+        addShopInfoOverlay(shopType == null ? -1 : shopType.getShopTypeId());
     }
 
     public class MyLocationListener extends BDAbstractLocationListener {
@@ -198,7 +206,7 @@ public class MapFragment extends Fragment {
 
     private void initMap() throws Exception {
         LocationClient.setAgreePrivacy(true);
-        locClient = new LocationClient(getActivity().getApplicationContext());
+        locClient = new LocationClient(requireContext());
         locClient.registerLocationListener(new MyLocationListener());
         baiduMap = mapView.getMap();
         baiduMap.getUiSettings().setRotateGesturesEnabled(false); //force not rotate
@@ -232,19 +240,14 @@ public class MapFragment extends Fragment {
             }
 
             latLng = new LatLng(item.getShopLatitude(), item.getShopLongitude());
-            Bitmap bit = null;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                bit = mapViewModel.getShopTypeList()
-                        .getValue()
-                        .stream()
-                        .filter(type-> Objects.equals(type.getShopTypeId(), item.getShopTypeId()))
-                        .findFirst()
-                        .get()
-                        .getShopTypeMarkerIconBitmap();
-            }
-            BitmapDescriptor bitmap = BitmapDescriptorFactory.fromBitmap(bit);
+
+            BitmapDescriptor bitmap = BitmapDescriptorFactory.fromBitmap(
+                    mainViewModel.getShopTypeMap()
+                            .getValue()
+                            .get((long) item.getShopTypeId())
+                            .getShopTypeMarkerIconBitmap()
+            );
             overlayOptions = new MarkerOptions().position(latLng).icon(bitmap);
-//            Log.e("MapFragment", "add Marker: " + item.getShopId());
             Bundle bundle = new Bundle();
             bundle.putInt("position", position);
             Marker marker = (Marker) baiduMap.addOverlay(overlayOptions);
@@ -287,7 +290,7 @@ public class MapFragment extends Fragment {
         TextView textViewShopSales = itemView.findViewById(R.id.shopSales);
         RatingBar ratingBarShopRating = itemView.findViewById(R.id.shopRating);
         ImageView imageViewShopCoverImage = itemView.findViewById(R.id.shopCoverImage);
-        TextView textViewShopDescription = itemView.findViewById(R.id.shopDescription);
+        TextView textViewShopType = itemView.findViewById(R.id.recycleitem_shop_card_shop_type);
         CardView cardView = itemView.findViewById(R.id.shop_card);
 
         ShopInfo shopInfo = shopInfoList.get(position);
@@ -301,7 +304,9 @@ public class MapFragment extends Fragment {
 
         textViewShopName.setText(shopInfo.getShopName());
         textViewShopSales.setText(itemView.getContext().getString(R.string.shop_sales, shopInfo.getShopSales()));
-        textViewShopDescription.setText(shopInfo.getShopDescription());
+        if (!mainViewModel.getShopTypeMap().getValue().isEmpty()) {
+            textViewShopType.setText(mainViewModel.getShopTypeMap().getValue().get(shopInfo.getShopTypeId()).getShopTypeName());
+        }
         ratingBarShopRating.setRating(shopInfo.getShopRating().floatValue());
         Glide.with(itemView).load(RequestUtils.baseStaticUrl + shopInfo.getShopCoverImage()).into(imageViewShopCoverImage);
         cardView.setOnClickListener(new View.OnClickListener() {
@@ -332,54 +337,6 @@ public class MapFragment extends Fragment {
         }
         Log.e("TAG", "getNavigationBarHeight: " + result);
         return result;
-    }
-
-    private void initClassification() {
-        HorizontalScrollView horizontalScrollView = view.findViewById(R.id.horizontalScrollView);
-        LinearLayout container = horizontalScrollView.findViewById(R.id.horizontalScrollViewItemContainer);
-
-        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.gravity = Gravity.CENTER;
-        layoutParams.setMargins(20, 10, 20, 10);
-
-        boolean[] clickable = new boolean[shopTypeList.size() + 1];
-        List<TextView> textViewList = new ArrayList<>();
-
-        Log.e(TAG, "initClassification: " + shopTypeList.size());
-        for (ShopType shopType: shopTypeList) {
-            TextView textView = new TextView(getContext());
-            textView.setText(shopType.getShopTypeName());
-            textView.setLayoutParams(layoutParams);
-            container.addView(textView);
-            container.invalidate();
-            textViewList.add(textView);
-
-            textView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int typeId = shopType.getShopTypeId().intValue();
-                    Log.e(TAG, "onClick: " + typeId + Arrays.toString(clickable));
-
-                    if (clickable[typeId]) {
-                        clickable[typeId] = false;
-                        textView.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
-                        addShopInfoOverlay(-1);
-                        return;
-                    }
-
-                    int id = 0;
-                    for (TextView tv: textViewList) {
-                        clickable[id] = false;
-                        tv.setTypeface(Typeface.defaultFromStyle(Typeface.NORMAL));
-                        id++;
-                    }
-                    clickable[typeId] = true;
-                    textView.setTypeface(Typeface.defaultFromStyle(Typeface.BOLD));
-                    addShopInfoOverlay(shopType.getShopTypeId());
-                }
-            });
-        }
     }
 
     @Override

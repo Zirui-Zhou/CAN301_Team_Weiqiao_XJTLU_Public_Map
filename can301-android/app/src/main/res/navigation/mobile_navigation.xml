@@ -13,6 +13,10 @@
         <action
             android:id="@+id/action_navigation_home_to_navigation_detail2"
             app:destination="@id/navigation_detail"
+            app:enterAnim="@anim/in_from_right"
+            app:exitAnim="@anim/out_to_left"
+            app:popEnterAnim="@anim/in_from_right"
+            app:popExitAnim="@anim/out_to_left"
             app:popUpTo="@id/navigation_home" />
     </fragment>
 
@@ -24,6 +28,10 @@
         <action
             android:id="@+id/action_navigation_home_to_navigation_detail3"
             app:destination="@id/navigation_detail"
+            app:enterAnim="@anim/in_from_bottom"
+            app:exitAnim="@anim/out_to_left"
+            app:popEnterAnim="@anim/in_from_right"
+            app:popExitAnim="@anim/out_to_left"
             app:popUpTo="@id/navigation_map" />
     </fragment>
 
@@ -35,7 +43,7 @@
     <fragment
         android:id="@+id/navigation_detail"
         android:name="com.example.can301_2.ui.detail.DetailFragment"
-        android:label="navigation_detail" >
+        android:label="@string/title_shop_detail" >
         <argument
             android:name="shop_id"
             app:argType="long"

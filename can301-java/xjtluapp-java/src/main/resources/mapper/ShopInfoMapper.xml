@@ -10,8 +10,7 @@
         <result property="shopSales" column="shop_sales" jdbcType="INTEGER"/>
         <result property="shopCoverImage" column="shop_cover_image" jdbcType="VARCHAR"/>
 <!--        <result property="shopAveragePrice" column="shop_average_price" jdbcType="FLOAT"/>-->
-        <result property="shopOpenTime" column="shop_open_time" jdbcType="TIME"/>
-        <result property="shopCloseTime" column="shop_close_time" jdbcType="TIME"/>
+        <result property="shopDurationTime" column="shop_duration_time" jdbcType="VARCHAR"/>
         <result property="shopDescription" column="shop_description" jdbcType="VARCHAR"/>
         <result property="shopLatitude" column="shop_latitude" jdbcType="FLOAT"/>
         <result property="shopLongitude" column="shop_longitude" jdbcType="FLOAT"/>
@@ -41,7 +40,7 @@
 
     <sql id="selectShopInfo">
         SELECT s.shop_id, s.shop_name, s.shop_rating, s.shop_sales, s.shop_cover_image,
-               s.shop_open_time, s.shop_close_time, s.shop_description,
+               s.shop_duration_time, s.shop_description,
                s.shop_latitude, s.shop_longitude, i.shop_image_url, s.shop_type_id
         FROM can301.shop_info s
                  LEFT JOIN can301.shop_detail_image i

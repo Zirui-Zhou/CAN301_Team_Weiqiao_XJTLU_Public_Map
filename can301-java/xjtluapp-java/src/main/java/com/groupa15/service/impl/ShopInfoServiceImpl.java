@@ -32,6 +32,8 @@ public class ShopInfoServiceImpl extends ServiceImpl<ShopInfoMapper, ShopInfo> i
         return shopInfoMapper.selectShopInfoById(shopId);
     }
 
-    ;
+    public List<ShopInfoVo> getShopInfoByShopTypeId(Long shopTypeId) {
+        return shopInfoMapper.selectShopInfoByShopTypeId(shopTypeId);
+    }
 
 }

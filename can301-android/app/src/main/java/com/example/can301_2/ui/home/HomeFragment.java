@@ -1,58 +1,72 @@
 package com.example.can301_2.ui.home;
 
-import android.app.ProgressDialog;
-import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.can301_2.MainViewModel;
+import com.example.can301_2.adapter.CategoryItemAdapter;
 import com.example.can301_2.adapter.ShopCardAdapter;
 import com.example.can301_2.api.ShopInfoApi;
 import com.example.can301_2.databinding.FragmentHomeBinding;
 import com.example.can301_2.domain.ShopInfo;
+import com.example.can301_2.domain.ShopType;
 import com.example.can301_2.utils.RequestUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class HomeFragment extends Fragment {
+public class HomeFragment extends Fragment implements CategoryItemAdapter.EventListener{
 
     private FragmentHomeBinding binding;
-    RecyclerView recyclerView;
+    RecyclerView recyclerViewShopInfo, recyclerViewShopType;
     ShopCardAdapter shopCardAdapter;
-    ProgressDialog progressDialog;
+    CategoryItemAdapter shopTypeAdapter;
     HomeViewModel homeViewModel;
+    MainViewModel mainViewModel;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         homeViewModel = new ViewModelProvider(this).get(HomeViewModel.class);
+        mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);
 
-        homeViewModel.getShopInfo().observe(getViewLifecycleOwner(), new Observer<List<ShopInfo>>() {
-            @Override
-            public void onChanged(List<ShopInfo> dataDTOS) {
-                shopCardAdapter.setAllShopInfo(dataDTOS);
-                shopCardAdapter.notifyDataSetChanged();
-            }
+        homeViewModel.getShopInfo().observe(getViewLifecycleOwner(), dataDTOS -> {
+            shopCardAdapter.setAllShopInfo(dataDTOS);
+            shopCardAdapter.notifyDataSetChanged();
+        });
+
+        mainViewModel.getShopTypeMap().observe(getViewLifecycleOwner(), shopTypeMap -> {
+            shopTypeAdapter.setShopTypeList(new ArrayList<>(shopTypeMap.values()));
+            shopCardAdapter.setShopTypeMap(shopTypeMap);
+            shopTypeAdapter.notifyDataSetChanged();
         });
 
         binding = FragmentHomeBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        recyclerView = binding.shopCardList;
-        shopCardAdapter = new ShopCardAdapter();
-        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        recyclerView.setAdapter(shopCardAdapter);
+        recyclerViewShopInfo = binding.shopCardList;
+        shopCardAdapter = new ShopCardAdapter(mainViewModel.getShopTypeMap().getValue());
+        recyclerViewShopInfo.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerViewShopInfo.setAdapter(shopCardAdapter);
 
-        MyAsyncTasks myAsyncTasks = new MyAsyncTasks();
-        myAsyncTasks.execute();
+        recyclerViewShopType = binding.homeShopTypeList;
+        shopTypeAdapter = new CategoryItemAdapter(this);
+        recyclerViewShopType.setLayoutManager(new LinearLayoutManager(getActivity(), LinearLayoutManager.HORIZONTAL, false));
+        recyclerViewShopType.setAdapter(shopTypeAdapter);
+
+        updateShopInfoListByType(null);
 
         return root;
     }
@@ -63,18 +77,23 @@ public class HomeFragment extends Fragment {
         binding = null;
     }
 
-    public class MyAsyncTasks extends AsyncTask<Void, Void, List<ShopInfo>> {
+    @Override
+    public void updateShopInfoListByType(ShopType shopType) {
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
 
-        @Override
-        protected List<ShopInfo> doInBackground(Void... params) {
+        executor.execute(() -> {
             ShopInfoApi shopInfoService = RequestUtils.getService(ShopInfoApi.class);
-            return shopInfoService.getAllShopInfo().getData();
-        }
+            List<ShopInfo> shopInfoList;
+            if (shopType == null) {
+                shopInfoList = shopInfoService.getAllShopInfo().getData();
+            } else {
+                shopInfoList = shopInfoService.getShopInfoByShopTypeId(shopType.getShopTypeId()).getData();
+            }
 
-        @Override
-        protected void onPostExecute(List<ShopInfo> shopInfo) {
-            homeViewModel.setShopInfo(shopInfo);
-        }
+            handler.post(() -> {
+                homeViewModel.setShopInfo(shopInfoList);
+            });
+        });
     }
-
 }

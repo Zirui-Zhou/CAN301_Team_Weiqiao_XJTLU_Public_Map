@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.can301_2.domain.ShopInfo;
+import com.example.can301_2.domain.ShopType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,8 +15,7 @@ public class HomeViewModel extends ViewModel {
     private final MutableLiveData<List<ShopInfo>> shopInfo;
 
     public HomeViewModel() {
-        shopInfo = new MutableLiveData<>();
-        shopInfo.setValue(new ArrayList<>());
+        shopInfo = new MutableLiveData<>(new ArrayList<>());
     }
 
     public LiveData<List<ShopInfo>> getShopInfo() {
@@ -25,4 +25,5 @@ public class HomeViewModel extends ViewModel {
     public void setShopInfo(List<ShopInfo> shopInfo) {
         this.shopInfo.setValue(shopInfo);
     }
+
 }

@@ -3,6 +3,7 @@ package com.groupa15.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.groupa15.entity.ShopInfo;
 import com.groupa15.entity.vo.ShopInfoVo;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -15,4 +16,6 @@ public interface ShopInfoService extends IService<ShopInfo>{
     List<ShopInfoVo> getAllShopInfo();
 
     ShopInfoVo getShopInfoById(Long shopId);
+
+    List<ShopInfoVo> getShopInfoByShopTypeId(Long shopTypeId);
 }

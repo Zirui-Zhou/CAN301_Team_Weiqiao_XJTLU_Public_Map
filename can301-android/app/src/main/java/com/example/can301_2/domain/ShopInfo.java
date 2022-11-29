@@ -30,11 +30,8 @@ public class ShopInfo {
     @SerializedName("shopAveragePrice")
     private Double shopAveragePrice;
 
-    @SerializedName("shopOpenTime")
-    private String shopOpenTime;
-
-    @SerializedName("shopCloseTime")
-    private String shopCloseTime;
+    @SerializedName("shopDurationTime")
+    private String shopDurationTime;
 
     @SerializedName("shopDescription")
     private String shopDescription;

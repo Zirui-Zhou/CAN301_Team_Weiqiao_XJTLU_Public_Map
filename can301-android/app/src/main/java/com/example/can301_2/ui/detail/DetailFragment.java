@@ -56,8 +56,11 @@ public class DetailFragment extends Fragment {
         binding = FragmentAnotherDetailBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        ImageView imageViewShopCover = binding.imageView;
+        ImageView imageViewShopCover = binding.detailShopCoverImage;
         TextView textViewShopName = binding.detailShopName;
+        TextView textViewShopSales = binding.detailShopSales;
+        TextView textViewShopDescription = binding.detailShopDescription;
+        TextView textViewShopTime = binding.detailShopTime;
         RatingBar ratingBarShopRating = binding.detailShopRating;
         RecyclerView recyclerViewShopDetailImage = binding.detailShopDetailImageList;
         RecyclerView recyclerViewItemInfo = binding.detailShopItemInfoList;
@@ -111,6 +114,9 @@ public class DetailFragment extends Fragment {
                         .into(imageViewShopCover);
                 textViewShopName.setText(shopInfo.getShopName());
                 ratingBarShopRating.setRating(shopInfo.getShopRating().floatValue());
+                textViewShopSales.setText(getContext().getString(R.string.shop_sales, shopInfo.getShopSales()));
+                textViewShopDescription.setText(shopInfo.getShopDescription());
+                textViewShopTime.setText(getContext().getString(R.string.shop_duration, shopInfo.getShopDurationTime()));
                 imageGalleryAdapter.setImageUrls(shopInfo.getShopDetailImages());
                 imageGalleryAdapter.notifyDataSetChanged();
                 itemCardAdapter.setItemInfoList(itemInfoList);

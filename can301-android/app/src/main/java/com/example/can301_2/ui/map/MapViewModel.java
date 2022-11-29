@@ -13,11 +13,9 @@ import java.util.List;
 public class MapViewModel extends ViewModel {
 
     private final MutableLiveData<List<ShopInfo>> shopInfo;
-    private final MutableLiveData<List<ShopType>> shopTypeList;
 
     public MapViewModel() {
         shopInfo = new MutableLiveData<>(new ArrayList<>());
-        shopTypeList = new MutableLiveData<>(new ArrayList<>());
     }
 
     public LiveData<List<ShopInfo>> getShopInfo() {
@@ -28,11 +26,4 @@ public class MapViewModel extends ViewModel {
         this.shopInfo.setValue(shopInfo);
     }
 
-    public LiveData<List<ShopType>> getShopTypeList() {
-        return shopTypeList;
-    }
-
-    public void setShopTypeList(List<ShopType> shopTypeList) {
-        this.shopTypeList.setValue(shopTypeList);
-    }
 }

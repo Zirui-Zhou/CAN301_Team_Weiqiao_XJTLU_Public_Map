@@ -3,30 +3,53 @@ package com.example.can301_2;
 import static androidx.navigation.ui.NavigationUI.onNavDestinationSelected;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
+import androidx.navigation.NavGraph;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
+import com.bumptech.glide.Glide;
+import com.example.can301_2.api.ShopInfoApi;
 import com.example.can301_2.databinding.ActivityMainBinding;
 
 import com.baidu.mapapi.CoordType;
 import com.baidu.mapapi.SDKInitializer;
+import com.example.can301_2.domain.ShopInfo;
+import com.example.can301_2.domain.ShopType;
+import com.example.can301_2.utils.RequestUtils;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 
 public class MainActivity extends AppCompatActivity{
@@ -34,6 +57,8 @@ public class MainActivity extends AppCompatActivity{
     private final String TAG = "MainActivity";
     private ActivityMainBinding binding;
     private BottomNavigationView navView;
+
+    public MainViewModel mainViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,11 +97,51 @@ public class MainActivity extends AppCompatActivity{
             Log.d(TAG, String.valueOf(item));
             // Note that here can only go back one step in navigation.
             navController.navigateUp();
-            onNavDestinationSelected(item, navController);
-            return true;
+//            onNavDestinationSelected(item, navController);
+
+            NavOptions.Builder builder = new NavOptions.Builder()
+                    .setLaunchSingleTop(false)
+                    .setEnterAnim(R.anim.in_from_right)
+                    .setExitAnim(R.anim.out_to_left)
+                    .setPopEnterAnim(R.anim.in_from_right)
+                    .setPopExitAnim(R.anim.out_to_left);
+            NavigationUIHelper navigationUIHelper = new NavigationUIHelper();
+            return navigationUIHelper.onNavDestinationSelected(item, navController, builder);
+        });
+
+        mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            ShopInfoApi shopInfoService = RequestUtils.getService(ShopInfoApi.class);
+            List<ShopType> shopTypeList = shopInfoService.getAllShopType().getData();
+            for(ShopType shopType : shopTypeList) {
+                try {
+                    shopType.setShopTypeMarkerIconBitmap(
+                            Glide.with(this)
+                                    .asBitmap()
+                                    .load(RequestUtils.baseStaticUrl + shopType.getShopTypeMarkerIcon())
+                                    .submit()
+                                    .get()
+                    );
+                } catch (ExecutionException | InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+            Map<Long, ShopType> shopTypeMap = shopTypeList.stream().collect(Collectors.toMap(ShopType::getShopTypeId, item -> item));
+            handler.post(() -> {
+                mainViewModel.setShopTypeMap(shopTypeMap);
+            });
         });
     }
 
+    @Nullable
+    @Override
+    public View onCreateView(@Nullable View parent, @NonNull String name, @NonNull Context context, @NonNull AttributeSet attrs) {
+        return super.onCreateView(parent, name, context, attrs);
+    }
 
     private void initSDK(boolean status) {
         SDKInitializer.setAgreePrivacy(getApplicationContext(), status);
@@ -96,5 +161,34 @@ public class MainActivity extends AppCompatActivity{
     
     public int getBarHeight() {
         return navView.getMeasuredHeight();
+    }
+
+    // Reference: https://stackoverflow.com/questions/53976785/android-navigation-component-pop-to-transition-issue
+    public static class NavigationUIHelper {
+        public boolean onNavDestinationSelected(@NonNull MenuItem item,
+                                                @NonNull NavController navController,
+                                                @NonNull NavOptions.Builder builder) {
+            if ((item.getOrder() & Menu.CATEGORY_SECONDARY) == 0) {
+                NavDestination destination = findStartDestination(navController.getGraph());
+                builder.setPopUpTo(destination.getId(), false);
+            }
+            NavOptions options = builder.build();
+            try {
+                navController.navigate(item.getItemId(), null, options);
+                return true;
+            } catch (IllegalArgumentException e) {
+                return false;
+            }
+        }
+
+        // Need to copy this private method as well
+        private NavDestination findStartDestination(@NonNull NavGraph graph) {
+            NavDestination startDestination = graph;
+            while (startDestination instanceof NavGraph) {
+                NavGraph parent = (NavGraph) startDestination;
+                startDestination = parent.findNode(parent.getStartDestination());
+            }
+            return startDestination;
+        }
     }
 }

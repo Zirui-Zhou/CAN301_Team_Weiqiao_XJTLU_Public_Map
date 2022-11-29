@@ -25,9 +25,7 @@ public class ShopInfoVo {
 
     private float shopAveragePrice;
 
-    private Date shopOpenTime;
-
-    private Date shopCloseTime;
+    private String shopDurationTime;
 
     private String shopDescription;
 

@@ -6,6 +6,8 @@
     <string name="title_home">Home</string>
     <string name="title_map">Map</string>
     <string name="title_user">User</string>
-    <string name="shop_sales">月售：%1$s</string>
-    <string name="item_price">售价：%1$s</string>
+    <string name="shop_sales">Sales：%1$s</string>
+    <string name="shop_duration">Time：%1$s</string>
+    <string name="item_price">Price：%1$s</string>
+    <string name="title_shop_detail">Shop Detail</string>
 </resources>
