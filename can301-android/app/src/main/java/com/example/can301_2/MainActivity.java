@@ -1,5 +1,7 @@
 package com.example.can301_2;
 
+import static androidx.navigation.ui.NavigationUI.onNavDestinationSelected;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -66,6 +68,13 @@ public class MainActivity extends AppCompatActivity{
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
         NavigationUI.setupWithNavController(binding.navView, navController);
+        navView.setOnItemSelectedListener(item -> {
+            Log.d(TAG, String.valueOf(item));
+            // Note that here can only go back one step in navigation.
+            navController.navigateUp();
+            onNavDestinationSelected(item, navController);
+            return true;
+        });
     }
 
 
