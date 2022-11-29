@@ -197,6 +197,7 @@ public class MapFragment extends Fragment {
         locClient = new LocationClient(getActivity().getApplicationContext());
         locClient.registerLocationListener(new MyLocationListener());
         baiduMap = mapView.getMap();
+        baiduMap.getUiSettings().setRotateGesturesEnabled(false); //force not rotate
         baiduMap.setMyLocationEnabled(true);
         LocationClientOption option = new LocationClientOption();
         option.setOpenGps(true);
