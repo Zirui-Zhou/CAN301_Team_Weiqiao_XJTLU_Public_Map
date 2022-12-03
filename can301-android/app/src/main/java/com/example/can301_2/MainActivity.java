@@ -218,6 +218,7 @@ public class MainActivity extends AppCompatActivity{
                 AlertDialog alert = builder.create();
                 alert.show();
                 ((TextView) alert.findViewById(android.R.id.message)).setAutoLinkMask(Linkify.EMAIL_ADDRESSES);
+                ((TextView) alert.findViewById(android.R.id.message)).setTextIsSelectable(true);
                 ((TextView) alert.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
                 return true;
             }
