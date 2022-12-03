@@ -36,11 +36,6 @@
     </fragment>
 
     <fragment
-        android:id="@+id/navigation_user"
-        android:name="com.example.can301_2.ui.notifications.NotificationsFragment"
-        android:label="@string/title_user"
-        tools:layout="@layout/fragment_notifications" />
-    <fragment
         android:id="@+id/navigation_detail"
         android:name="com.example.can301_2.ui.detail.DetailFragment"
         android:label="@string/title_shop_detail" >

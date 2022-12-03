@@ -4,6 +4,7 @@ import static androidx.navigation.ui.NavigationUI.onNavDestinationSelected;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.fragment.app.Fragment;
@@ -21,17 +22,21 @@ import androidx.navigation.ui.NavigationUI;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.example.can301_2.api.ShopInfoApi;
@@ -88,7 +93,7 @@ public class MainActivity extends AppCompatActivity{
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         AppBarConfiguration appBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.navigation_home, R.id.navigation_map, R.id.navigation_user)
+                R.id.navigation_home, R.id.navigation_map)
                 .build();
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
@@ -108,6 +113,7 @@ public class MainActivity extends AppCompatActivity{
             NavigationUIHelper navigationUIHelper = new NavigationUIHelper();
             return navigationUIHelper.onNavDestinationSelected(item, navController, builder);
         });
+        navView.getMenu().removeItem(R.id.menu_item_info);
 
         mainViewModel = new ViewModelProvider(this).get(MainViewModel.class);
 
@@ -135,12 +141,6 @@ public class MainActivity extends AppCompatActivity{
                 mainViewModel.setShopTypeMap(shopTypeMap);
             });
         });
-    }
-
-    @Nullable
-    @Override
-    public View onCreateView(@Nullable View parent, @NonNull String name, @NonNull Context context, @NonNull AttributeSet attrs) {
-        return super.onCreateView(parent, name, context, attrs);
     }
 
     private void initSDK(boolean status) {
@@ -191,4 +191,38 @@ public class MainActivity extends AppCompatActivity{
             return startDestination;
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.bottom_nav_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.findItem(R.id.navigation_map).setVisible(false);
+        menu.findItem(R.id.navigation_home).setVisible(false);
+        menu.findItem(R.id.menu_item_info).setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem menuItem) {
+//                TextView contactView = new TextView(MainActivity.this);
+//                contactView.setAutoLinkMask(Linkify.ALL);
+//                contactView.setText(getString(R.string.dialog_info));
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+                builder.setMessage(getString(R.string.dialog_info))
+                        .setCancelable(false)
+                        .setPositiveButton("OK", (dialog, id) -> {
+                            //do things
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+                ((TextView) alert.findViewById(android.R.id.message)).setAutoLinkMask(Linkify.EMAIL_ADDRESSES);
+                ((TextView) alert.findViewById(android.R.id.message)).setMovementMethod(LinkMovementMethod.getInstance());
+                return true;
+            }
+        });
+        return true;
+    }
+
 }

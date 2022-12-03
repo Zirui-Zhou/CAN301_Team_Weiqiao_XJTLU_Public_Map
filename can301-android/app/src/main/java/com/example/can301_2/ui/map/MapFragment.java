@@ -3,24 +3,18 @@ package com.example.can301_2.ui.map;
 
 import android.content.Context;
 import android.content.res.Resources;
-import android.graphics.Bitmap;
-import android.graphics.Typeface;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
-import android.widget.HorizontalScrollView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -38,6 +32,7 @@ import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
@@ -55,26 +50,18 @@ import com.example.can301_2.MainActivity;
 import com.example.can301_2.MainViewModel;
 import com.example.can301_2.R;
 import com.example.can301_2.adapter.CategoryItemAdapter;
-import com.example.can301_2.api.ItemInfoApi;
 import com.example.can301_2.api.ShopInfoApi;
-import com.example.can301_2.databinding.FragmentHomeBinding;
-import com.example.can301_2.databinding.FragmentMapBinding;
-import com.example.can301_2.domain.ItemInfo;
 import com.example.can301_2.domain.ShopInfo;
 import com.example.can301_2.domain.ShopType;
 import com.example.can301_2.utils.RequestUtils;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 
 public class MapFragment extends Fragment implements CategoryItemAdapter.EventListener{
-    private FragmentMapBinding binding;
     private View view;
     private MapView mapView;
     private BaiduMap baiduMap;
@@ -105,8 +92,6 @@ public class MapFragment extends Fragment implements CategoryItemAdapter.EventLi
         if(view == null){
             view = inflater.inflate(R.layout.fragment_map, container, false);
         }
-
-        binding = FragmentMapBinding.inflate(inflater, container, false);
 
         mapViewModel = new ViewModelProvider(this).get(MapViewModel.class);
         mainViewModel = new ViewModelProvider(requireActivity()).get(MainViewModel.class);

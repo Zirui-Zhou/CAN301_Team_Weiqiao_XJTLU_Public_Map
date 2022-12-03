@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/menu_item_info"
+        android:icon="@drawable/ic_baseline_info_24"
+        android:title="Info"
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/navigation_home"
@@ -10,10 +17,5 @@
         android:id="@+id/navigation_map"
         android:icon="@drawable/ic_baseline_map_24"
         android:title="@string/title_map" />
-
-    <item
-        android:id="@+id/navigation_user"
-        android:icon="@drawable/ic_baseline_info_24"
-        android:title="@string/title_user" />
 
 </menu>

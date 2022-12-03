@@ -27,7 +27,7 @@ import com.example.can301_2.adapter.ImageGalleryAdapter;
 import com.example.can301_2.adapter.ItemCardAdapter;
 import com.example.can301_2.api.ItemInfoApi;
 import com.example.can301_2.api.ShopInfoApi;
-import com.example.can301_2.databinding.FragmentAnotherDetailBinding;
+import com.example.can301_2.databinding.FragmentDetailBinding;
 import com.example.can301_2.domain.ItemInfo;
 import com.example.can301_2.domain.ShopInfo;
 import com.example.can301_2.utils.RequestUtils;
@@ -38,7 +38,7 @@ import java.util.concurrent.Executors;
 
 public class DetailFragment extends Fragment {
     String TAG = "detail";
-    private FragmentAnotherDetailBinding binding;
+    private FragmentDetailBinding binding;
     private DetailViewModel detailViewModel;
 
     public static DetailFragment newInstance() {
@@ -53,7 +53,7 @@ public class DetailFragment extends Fragment {
         detailViewModel = new ViewModelProvider(this).get(DetailViewModel.class);
 
 
-        binding = FragmentAnotherDetailBinding.inflate(inflater, container, false);
+        binding = FragmentDetailBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
         ImageView imageViewShopCover = binding.detailShopCoverImage;
